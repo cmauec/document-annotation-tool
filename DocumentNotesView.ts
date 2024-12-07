@@ -1,4 +1,4 @@
-import { ItemView, WorkspaceLeaf, TextAreaComponent, ButtonComponent, MarkdownRenderer, MarkdownView, App } from 'obsidian';
+import { ItemView, WorkspaceLeaf, TextAreaComponent, ButtonComponent, MarkdownRenderer, MarkdownView, Notice } from 'obsidian';
 import DocumentNotesPlugin from './main';
 
 export const VIEW_TYPE_DOCUMENT_NOTES = 'document-notes-view';
@@ -19,7 +19,7 @@ interface Note {
 }
 
 export class DocumentNotesView extends ItemView {
-    private plugin: DocumentNotesPlugin;
+    private readonly plugin: DocumentNotesPlugin;
     private notesContainer: HTMLElement;
     private notes: Note[] = [];
 
@@ -42,7 +42,7 @@ export class DocumentNotesView extends ItemView {
 
         // Create new note button
         const buttonContainer = container.createDiv('button-container');
-        const newNoteButton = new ButtonComponent(buttonContainer)
+        new ButtonComponent(buttonContainer)
             .setButtonText('Nueva Nota')
             .onClick(() => this.createNewNote());
 
@@ -91,14 +91,9 @@ export class DocumentNotesView extends ItemView {
             // If there is selected text, display it
             if (note.selectedText) {
                 const selectedTextDiv = noteDiv.createDiv('selected-text');
-                const header = selectedTextDiv.createEl('h6', { text: 'Selected Text:' });
+                selectedTextDiv.createEl('h6', { text: 'Selected Text:' });
                 const textContent = selectedTextDiv.createDiv('selected-text-content');
-                await MarkdownRenderer.renderMarkdown(
-                    note.selectedText,
-                    textContent,
-                    '',
-                    this
-                );
+                await MarkdownRenderer.render(this.app, note.selectedText, textContent, '', this);
             }
 
             // Create text area for the note
@@ -117,7 +112,7 @@ export class DocumentNotesView extends ItemView {
 
             // Button to go to selection
             if (note.selectedText && note.selectionStart) {
-                const gotoButton = new ButtonComponent(buttonContainer)
+                new ButtonComponent(buttonContainer)
                     .setButtonText('Ir a selección')
                     .onClick(async () => {
                         try {
@@ -188,17 +183,15 @@ export class DocumentNotesView extends ItemView {
                             // Highlight selection
                             editor.setSelection(note.selectionStart, note.selectionEnd);
 
-                            // Dar feedback visual
                             new Notice('Navegado a la selección');
                         } catch (error) {
-                            console.error('Error al navegar:', error);
                             new Notice(`Error al navegar: ${error.message}`);
                         }
                     });
             }
 
             // Button to delete note
-            const deleteButton = new ButtonComponent(buttonContainer)
+            new ButtonComponent(buttonContainer)
                 .setButtonText('Eliminar')
                 .onClick(async () => {
                     this.notes = this.notes.filter(n => n.id !== note.id);
@@ -211,7 +204,8 @@ export class DocumentNotesView extends ItemView {
     async refresh() {
         const notes = await this.plugin.getNotesForCurrentFile();
         if (notes) {
-            this.notes = notes.sort((a, b) => b.createdAt - a.createdAt);
+            this.notes = notes;
+            this.notes.sort((a, b) => b.createdAt - a.createdAt);
             await this.renderNotes();
         } else {
             this.notes = [];

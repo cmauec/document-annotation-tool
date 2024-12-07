@@ -1,4 +1,4 @@
-import { App, Editor, MarkdownView, Modal, Notice, Plugin, PluginSettingTab, Setting, WorkspaceLeaf, TFile } from 'obsidian';
+import { Editor, Notice, Plugin, TFile } from 'obsidian';
 import { DocumentNotesView, VIEW_TYPE_DOCUMENT_NOTES } from './DocumentNotesView';
 
 interface Note {
@@ -26,40 +26,40 @@ export default class DocumentNotesPlugin extends Plugin {
     private originalDocumentPath: string = '';
 
     async onload() {
-        // Registrar la vista del panel lateral
+        // Register the sidebar view
         this.registerView(
             VIEW_TYPE_DOCUMENT_NOTES,
             (leaf) => new DocumentNotesView(leaf, this)
         );
 
-        // Agregar el comando para mostrar el panel
+        // Add the command to show the panel
         this.addCommand({
             id: 'show-document-notes',
             name: 'Show Document Notes',
             callback: () => this.activateView()
         });
 
-        // Crear la carpeta de notas si no existe
+        // Create the notes folder if it does not exist
         await this.ensureNotesFolder();
 
-        // Activar la vista al inicio
+        // Activate the view at startup
         this.activateView();
 
-        // Suscribirse al evento de cambio de archivo activo
+        // Subscribe to the active file change event
         this.registerEvent(
             this.app.workspace.on('file-open', () => {
                 this.refreshView();
             })
         );
 
-        // Agregar comando para crear nota desde selección
+        // Add command to create note from selection
         this.addCommand({
             id: 'create-note-from-selection',
             name: 'Create Note from Selection',
             editorCallback: (editor) => this.createNoteFromSelection(editor)
         });
 
-        // Agregar opción al menú contextual
+        // Add option to the context menu
         this.registerEvent(
             this.app.workspace.on('editor-menu', (menu, editor) => {
                 if (editor.getSelection()) {
@@ -146,7 +146,7 @@ export default class DocumentNotesPlugin extends Plugin {
     async createNoteFromSelection(editor: Editor) {
         const selectedText = editor.getSelection();
         if (selectedText) {
-            // Obtener las posiciones exactas de inicio y fin
+            // Get exact start and end positions
             const cursorStart = editor.getCursor('from');
             const cursorEnd = editor.getCursor('to');
 
