@@ -1,0 +1,44 @@
+.notes-container {
+    padding: 10px;
+}
+
+.note-container {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 5px;
+}
+
+.button-container {
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+.note-container textarea {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 10px;
+}
+
+.selected-text {
+    background-color: var(--background-secondary);
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.selected-text h6 {
+    margin: 0 0 4px 0;
+    opacity: 0.7;
+}
+
+.selected-text-content {
+    font-size: 0.9em;
+}
+
+.note-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}

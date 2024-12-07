@@ -1,0 +1,10 @@
+{
+    "id": "document-annotation-tool",
+    "name": "Document Annotation Tool",
+    "version": "1.0.0",
+    "minAppVersion": "0.15.0",
+    "description": "Add notes to specific documents in a separate panel",
+    "author": "Carlos Vaca",
+    "authorUrl": "https://github.com/cmauec",
+    "isDesktopOnly": true
+}
