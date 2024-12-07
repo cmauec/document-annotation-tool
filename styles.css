@@ -42,3 +42,10 @@
     gap: 8px;
     justify-content: flex-end;
 }
+
+.note-date {
+    font-size: 0.8em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-align: right;
+}
