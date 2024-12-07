@@ -66,7 +66,7 @@ export class DocumentNotesView extends ItemView {
             selectionEnd
         };
 
-        this.notes.push(note);
+        this.notes.unshift(note);
         await this.plugin.saveNotes(this.notes);
         await this.renderNotes();
     }
@@ -76,6 +76,16 @@ export class DocumentNotesView extends ItemView {
 
         for (const note of this.notes) {
             const noteDiv = this.notesContainer.createDiv('note-container');
+
+            const dateDiv = noteDiv.createDiv('note-date');
+            const date = new Date(note.createdAt);
+            dateDiv.setText(date.toLocaleString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            }));
 
             // Si hay texto seleccionado, mostrarlo
             if (note.selectedText) {
@@ -97,6 +107,7 @@ export class DocumentNotesView extends ItemView {
                 .setValue(note.content)
                 .onChange(async (value) => {
                     note.content = value;
+                    note.createdAt = Date.now();
                     await this.plugin.saveNotes(this.notes);
                 });
 
@@ -199,7 +210,7 @@ export class DocumentNotesView extends ItemView {
     async refresh() {
         const notes = await this.plugin.getNotesForCurrentFile();
         if (notes) {
-            this.notes = notes;
+            this.notes = notes.sort((a, b) => b.createdAt - a.createdAt);
             await this.renderNotes();
         } else {
             this.notes = [];
